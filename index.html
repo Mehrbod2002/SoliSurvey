@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SoliSurvey Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css"
+    />
+    <link rel="stylesheet" href="styles/content.css" />
+    <script src="script.js"></script>
+    <script src="chart.js"></script>
+    <style>
+      #logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+
+      #logo-circle-bg {
+        fill: #fff;
+        stroke: #333;
+        stroke-width: 1;
+      }
+
+      #logo-circle {
+        fill: #fff;
+      }
+
+      #logo-text {
+        fill: #000;
+        font-size: 0.5vw;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+
+      #content {
+        display: none;
+      }
+    </style>
+    <script>
+      window.addEventListener("load", function () {
+        var loadingText = document.getElementById("logo-container");
+        var content = document.getElementById("content");
+        var opacity = 1;
+        var interval = setInterval(function () {
+          opacity -= 0.01;
+          loadingText.style.opacity = opacity;
+          if (opacity <= 0) {
+            clearInterval(interval);
+            loadingText.style.display = "none";
+            content.style.display = "block";
+            createChart();
+          }
+        }, 20);
+      });
+
+      function createChart() {
+        const ctx = document.getElementById("myChart").getContext("2d");
+        new Chart(ctx, chart_config);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="logo-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <circle id="logo-circle-bg" cx="100" cy="100" r="30" />
+        <circle id="logo-circle" cx="100" cy="100" r="25" />
+        <text id="logo-text" x="100" y="100">SoliSurvey</text>
+      </svg>
+    </div>
+
+    <div id="sidebar">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#download-logs">Download logs</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#satellite-information">Satellite information</a></li>
+        <li><a href="#about-us">About us</a></li>
+      </ul>
+    </div>
+
+    <div id="content">
+      <nav id="top-menu" class="top-menu">
+        <div class="site-name">SoliSurvey</div>
+        <div class="menu-toggle" onclick="toggleSidebar()">&#9776;</div>
+      </nav>
+
+      <section id="home">
+        <!-- Home content goes here -->
+      </section>
+
+      <section id="download-logs">
+        <!-- Download logs content goes here -->
+      </section>
+
+      <section id="settings">
+        <!-- Settings content goes here -->
+      </section>
+
+      <section id="satellite-information">
+        <canvas id="myChart"></canvas>
+      </section>
+
+      <section id="about-us">
+        <!-- About us content goes here -->
+      </section>
+    </div>
+  </body>
+</html>

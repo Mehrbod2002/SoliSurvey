@@ -1,0 +1,112 @@
+#sidebar {
+  background-color: #333;
+  color: #fff;
+  width: 200px;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: -200px;
+  top: 0;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1;
+}
+
+#sidebar.open {
+  left: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.site-name {
+  font-weight: bold;
+  font-size: 20px;
+  order: 2;
+}
+
+.menu-toggle {
+  cursor: pointer;
+  font-size: 24px;
+  order: 1;
+}
+
+#sidebar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#sidebar li {
+  margin-bottom: 10px;
+}
+
+#sidebar li a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+#sidebar li a:hover {
+  background-color: #555;
+}
+
+#content {
+  padding: 20px;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+  margin-top: 50px;
+  display: none;
+}
+
+#content.open {
+  margin-left: 200px;
+}
+
+h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.top-menu {
+  background-color: purple;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.top-menu.open {
+  left: 200px;
+  transition: left 0.3s ease;
+}
+
+.top-menu .site-name {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 20px;
+  margin-right: auto;
+  margin-left: 20px;
+}
+
+.top-menu .menu-toggle {
+  font-size: 24px;
+  margin-right: 20px; 
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
