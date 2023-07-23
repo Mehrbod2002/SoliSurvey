@@ -49,6 +49,7 @@
         var loadingText = document.getElementById("logo-container");
         var content = document.getElementById("content");
         var opacity = 1;
+        load("settings");
         var interval = setInterval(function () {
           opacity -= 0.01;
           loadingText.style.opacity = opacity;
@@ -58,8 +59,17 @@
             content.style.display = "block";
             createChart();
           }
-        }, 20);
+        }, 10);
       });
+
+      function load(id) {
+        document.getElementById("home").style.display = "none";
+        document.getElementById("logs").style.display = "none";
+        document.getElementById("info").style.display = "none";
+        document.getElementById("settings").style.display = "none";
+        document.getElementById("about").style.display = "none";
+        document.getElementById(id).style.display = "block";
+      }
 
       function createChart() {
         const ctx = document.getElementById("myChart").getContext("2d");
@@ -78,11 +88,11 @@
 
     <div id="sidebar">
       <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#download-logs">Download logs</a></li>
-        <li><a href="#settings">Settings</a></li>
-        <li><a href="#satellite-information">Satellite information</a></li>
-        <li><a href="#about-us">About us</a></li>
+        <li><a href="#" onclick="load('home')">Home</a></li>
+        <li><a href="#" onclick="load('logs')">Download logs</a></li>
+        <li><a href="#" onclick="load('settings')">Settings</a></li>
+        <li><a href="#" onclick="load('info')">Satellite information</a></li>
+        <li><a href="#" onclick="load('about')">About us</a></li>
       </ul>
     </div>
 
@@ -92,25 +102,155 @@
         <div class="menu-toggle" onclick="toggleSidebar()">&#9776;</div>
       </nav>
 
-      <section id="home">
-        <!-- Home content goes here -->
-      </section>
+      <section id="home">Home</section>
 
-      <section id="download-logs">
-        <!-- Download logs content goes here -->
-      </section>
+      <section id="logs"></section>
 
       <section id="settings">
-        <!-- Settings content goes here -->
+        <div class="setting">
+          <label>Rate</label>
+          <div class="rate-options">
+            <div class="custom-checkbox">
+              <input type="radio" name="rate" id="rate5Hz" value="5Hz" />
+              <label for="rate5Hz"></label>
+              <span>5 Hz</span>
+            </div>
+            <div class="custom-checkbox">
+              <input type="radio" name="rate" id="rate10Hz" value="10Hz" />
+              <label for="rate10Hz"></label>
+              <span>10 Hz</span>
+            </div>
+            <div class="custom-checkbox">
+              <input type="radio" name="rate" id="rate20Hz" value="20Hz" />
+              <label for="rate20Hz"></label>
+              <span>20 Hz</span>
+            </div>
+          </div>
+        </div>
+        <div class="setting">
+          <label>Satellite</label>
+          <div class="satellite-options">
+            <div class="satellite-checkbox">
+              <input type="checkbox" id="gps" value="gps" disabled />
+              <label for="gps">GPS</label>
+            </div>
+            <div class="satellite-checkbox">
+              <input type="checkbox" id="glonass" value="glonass" />
+              <label for="glonass">Glonass</label>
+            </div>
+            <div class="satellite-checkbox">
+              <input type="checkbox" id="galileo" value="galileo" />
+              <label for="galileo">Galileo</label>
+            </div>
+            <div class="satellite-checkbox">
+              <input type="checkbox" id="beidou" value="beidou" />
+              <label for="beidou">Beidou</label>
+            </div>
+            <div class="satellite-checkbox">
+              <input type="checkbox" id="qzss" value="qzss" />
+              <label for="qzss">QZSS</label>
+            </div>
+          </div>
+        </div>
+        <button id="save-button" onclick="saveSettings()">Save</button>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+          <label for="fileInput">Upload firmware:</label>
+          <input type="file" id="fileInput" name="firmwareFile" accept=".bin" />
+          <button id="save-button">UPLOAD</button>
+        </form>
+        <script>
+          function saveSettings() {
+            var hz = 0;
+            const selectedRate = document.querySelector(
+              'input[name="rate"]:checked'
+            ).value;
+            if (selectedRate == "5Hz") {
+              hz = "100";
+            } else if (selectedRate == "10Hz") {
+              hz = "010";
+            } else if (selectedRate == "20Hz") {
+              hz = "001";
+            }
+            const glonass = document.getElementById("glonass").checked ? 1 : 0;
+            const galileo = document.getElementById("galileo").checked ? 1 : 0;
+            const beidou = document.getElementById("beidou").checked ? 1 : 0;
+            const qzss = document.getElementById("qzss").checked ? 1 : 0;
+            const url = `http://192.168.2.1/save.cgi?save+config=${hz}${1}${glonass}${galileo}${beidou}${qzss}`;
+            const timeoutInMilliseconds = 5000;
+            const timeoutPromise = new Promise((resolve, reject) => {
+              setTimeout(() => {
+                reject(new Error("Timeout exceeded"));
+              }, timeoutInMilliseconds);
+            });
+
+            const fetchPromise = fetch(url).then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.text();
+            });
+
+            Promise.race([fetchPromise, timeoutPromise])
+              .then((data) => {
+                document.getElementById("save-button").innerText = "Done";
+                document.getElementById("save-button").style.backgroundColor =
+                  "green";
+                setTimeout(() => {
+                  document.getElementById("save-button").innerText = "SAVE";
+                  document.getElementById("save-button").style.backgroundColor =
+                    "#2196f3";
+                }, 2000);
+              })
+              .catch((error) => {
+                document.getElementById("save-button").innerText = "FALIED";
+                document.getElementById("save-button").style.backgroundColor =
+                  "red";
+                setTimeout(() => {
+                  document.getElementById("save-button").innerText = "SAVE";
+                  document.getElementById("save-button").style.backgroundColor =
+                    "#2196f3";
+                }, 2000);
+              });
+          }
+        </script>
       </section>
 
-      <section id="satellite-information">
+      <section id="info">
+        <table>
+          <tr>
+            <th>Latitude:</th>
+            <td id="lat"></td>
+          </tr>
+          <tr>
+            <th>Longitude:</th>
+            <td id="long"></td>
+          </tr>
+          <tr>
+            <th>Height above ellipsoid:</th>
+            <td id="height_above"></td>
+          </tr>
+          <tr>
+            <th>Height above mean sea level:</th>
+            <td id="height_sea"></td>
+          </tr>
+          <tr>
+            <th>Fix Mode:</th>
+            <td id="fix"></td>
+          </tr>
+          <tr>
+            <th>Last Timemark:</th>
+            <td id="date"></td>
+          </tr>
+          <tr>
+            <th>Number of Timemarks:</th>
+            <td id="timemark"></td>
+          </tr>
+        </table>
         <canvas id="myChart"></canvas>
       </section>
 
-      <section id="about-us">
-        <!-- About us content goes here -->
-      </section>
+      <section id="about">About US</section>
     </div>
   </body>
 </html>
