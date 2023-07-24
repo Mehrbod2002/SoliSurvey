@@ -202,17 +202,24 @@ function connectWebSocket() {
   const socketUrl = "ws://192.168.2.1/sattelite.inf";
   webSocket = new WebSocket(socketUrl);
 
+  webSocket.onopen = (event) => {
+    console.log("Open :",event);
+  };
+
   webSocket.onmessage = (event) => {
+    console.log("recieve")
     load_data(event.data);
   };
 
   webSocket.onclose = () => {
+    console.log("closed")
     setTimeout(() => {
       connectWebSocket();
     }, 3000);
   };
 
-  webSocket.onerror = () => {
+  webSocket.onerror = (msg) => {
+    console.log("Error :",msg);
     setTimeout(() => {
       connectWebSocket();
     }, 3000);
