@@ -86,8 +86,8 @@ function load_data(hexString) {
           (acc, byte, index) => acc + parseInt(byte, 16) * Math.pow(256, index)
         ) * 1e-3;
       const timemark = parseInt(i[14], 16);
-      document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("date").innerText = year+"/"+month+"/"+day+" - "+hour+":"+minute+":"+sec;
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("date").innerText = year + "/" + month + "/" + day + " - " + hour + ":" + minute + ":" + sec;
         document.getElementById("timemartk").innerText = timemark;
       });
     } else if (i[2] == 0x01 && i[3] == 0x70) {
@@ -128,14 +128,14 @@ function load_data(hexString) {
             datasets: [],
           };
           const colors = [...new Set(Object.values(chart_data).map((a) => a[0][1]))];
-          
+
           colors.forEach((color) => {
             const dataset = {
               label: '',
               backgroundColor: color,
               data: [],
             };
-          
+
             Object.keys(chart_data).forEach((key) => {
               const value = chart_data[key].find((item) => item[1] === color);
               if (value) {
@@ -144,10 +144,10 @@ function load_data(hexString) {
                 dataset.data.push(0);
               }
             });
-          
+
             data.datasets.push(dataset);
           });
-                  
+
           chart_config.data = data;
           const longitude =
             infos
@@ -183,7 +183,7 @@ function load_data(hexString) {
               ) * 1e-3;
           const fix_mode =
             parseInt(infos.slice(16, 20)[0], 16) == 0 ? "NOT Fixed" : "3D Fixed";
-          document.addEventListener("DOMContentLoaded", function() {
+          document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("long").innerText = longitude;
             document.getElementById("lat").innerText = latitude;
             document.getElementById("height_above").innerText = height_above;
@@ -196,34 +196,30 @@ function load_data(hexString) {
   }
 }
 
-let webSocket;
+const socketUrl = "ws://192.168.2.1/sattelite.inf";
+let webSocket = new WebSocket(socketUrl);
 
-function connectWebSocket() {
-  const socketUrl = "ws://192.168.2.1/sattelite.inf";
-  webSocket = new WebSocket(socketUrl);
+webSocket.onopen = (event) => {
+  console.log("Open :", event);
+};
 
-  webSocket.onopen = (event) => {
-    console.log("Open :",event);
-  };
+webSocket.onmessage = (event) => {
+  console.log("recieve")
+  load_data(event.data);
+};
 
-  webSocket.onmessage = (event) => {
-    console.log("recieve")
-    load_data(event.data);
-  };
+webSocket.onclose = () => {
+  console.log("closed")
+  setTimeout(() => {
+    connectWebSocket();
+  }, 3000);
+};
 
-  webSocket.onclose = () => {
-    console.log("closed")
-    setTimeout(() => {
-      connectWebSocket();
-    }, 3000);
-  };
+webSocket.onerror = (msg) => {
+  console.log("Error :", msg);
+  setTimeout(() => {
+    connectWebSocket();
+  }, 3000);
+};
 
-  webSocket.onerror = (msg) => {
-    console.log("Error :",msg);
-    setTimeout(() => {
-      connectWebSocket();
-    }, 3000);
-  };
-}
 
-connectWebSocket();
