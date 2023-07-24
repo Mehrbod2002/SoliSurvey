@@ -73,7 +73,9 @@
 
       function createChart() {
         const ctx = document.getElementById("myChart").getContext("2d");
-        new Chart(ctx, chart_config);
+        document.addEventListener("DOMContentLoaded", function() {
+          new Chart(ctx, chart_config);
+        });
       }
     </script>
   </head>
