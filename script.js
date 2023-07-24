@@ -210,16 +210,10 @@ webSocket.onmessage = (event) => {
 
 webSocket.onclose = () => {
   console.log("closed")
-  setTimeout(() => {
-    connectWebSocket();
-  }, 3000);
 };
 
 webSocket.onerror = (msg) => {
   console.log("Error :", msg);
-  setTimeout(() => {
-    connectWebSocket();
-  }, 3000);
 };
 
 
