@@ -208,8 +208,8 @@ webSocket.onmessage = (event) => {
   load_data(event.data);
 };
 
-webSocket.onclose = () => {
-  console.log("closed")
+webSocket.onclose = (event) => {
+  console.log("closed", event)
 };
 
 webSocket.onerror = (msg) => {
