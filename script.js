@@ -9,7 +9,6 @@ function toggleSidebar() {
 }
 
 function load_data(hexString) {
-  console.log(hexString);
   const GNSS_ID = {
     0: "GPS",
     1: "SBAS",
@@ -46,25 +45,8 @@ function load_data(hexString) {
     "6,0": ["L1 OF2", "rgba(255, 148, 148)"],
     "6,2": ["L2 OF", "rgba(54, 162, 235, 0.5)"],
   };
-  const chart_config = {
-    type: 'bar',
-    data: null,
-    options: {
-      responsive: true,
-      indexAxis: 'x',
-      scales: {
-        x: {
-          stacked: false
-        },
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  };
 
   const byteArray = hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16));
-
   const i = byteArray.map((byte) => "0x" + byte.toString(16).padStart(2, "0"));
   if (i[0] == 0xa4 && i[1] == 0x64) {
     if (i[2] == 0x0d && i[3] == 0x03) {
@@ -129,7 +111,6 @@ function load_data(hexString) {
             datasets: [],
           };
           const colors = [...new Set(Object.values(chart_data).map((a) => a[0][1]))];
-
           colors.forEach((color) => {
             const dataset = {
               label: '',
@@ -148,7 +129,6 @@ function load_data(hexString) {
 
             data.datasets.push(dataset);
           });
-
           chart_config.data = data;
           const longitude =
             infos
@@ -184,13 +164,11 @@ function load_data(hexString) {
               ) * 1e-3;
           const fix_mode =
             parseInt(infos.slice(16, 20)[0], 16) == 0 ? "NOT Fixed" : "3D Fixed";
-          document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("long").innerText = longitude;
             document.getElementById("lat").innerText = latitude;
             document.getElementById("height_above").innerText = height_above;
             document.getElementById("height_sea").innerText = height_sea;
             document.getElementById("fix").innerText = fix_mode;
-          });
         }
       }
     }
@@ -198,33 +176,26 @@ function load_data(hexString) {
 }
 
 const socketUrl = "ws://192.168.2.1/sattelite.inf";
-const socket = io(socketUrl);
 
-socket.on('message', (data) => {
-  console.log('Received message:', data);
-
-  const textDecoder = new TextDecoder('utf-8');
-  const receivedText = textDecoder.decode(data);
-  console.log(receivedText);
-
-});
-// let webSocket = new WebSocket(socketUrl);
+let webSocket = new WebSocket(socketUrl);
 
 // webSocket.onopen = (event) => {
-//   console.log("Open :", event);
 // };
 
-// webSocket.onmessage = (event) => {
-//   console.log("recieve")
-//   load_data(event.data);
-// };
+webSocket.onmessage = (event) => {
+  var reader = new FileReader();
+  reader.onload = () => {
+    var data = Array.from(new Uint8Array(reader.result)).map((d) => d.toString("16").padStart(2 ,'0')).join("");
+    load_data(data)
+  };
+  reader.readAsArrayBuffer(event.data)
+};
 
 // webSocket.onclose = (event) => {
-//   console.log("closed", event)
 // };
 
-// webSocket.onerror = (msg) => {
-//   console.log("Error :", msg);
-// };
+webSocket.onerror = (msg) => {
+  console.log("Error :", msg);
+};
 
 

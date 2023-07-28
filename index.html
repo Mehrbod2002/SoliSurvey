@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="styles/content.css" />
     <script src="script.js"></script>
     <script src="chart.js"></script>
-    <script src="socket-io.js"></script>
     <style>
       #logo-container {
         display: flex;
@@ -46,6 +45,22 @@
       }
     </style>
     <script>
+      const chart_config = {
+        type: "bar",
+        data: null,
+        options: {
+          responsive: true,
+          indexAxis: "x",
+          scales: {
+            x: {
+              stacked: false,
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      };
       window.addEventListener("load", function () {
         var loadingText = document.getElementById("logo-container");
         var content = document.getElementById("content");
@@ -74,9 +89,7 @@
 
       function createChart() {
         const ctx = document.getElementById("myChart").getContext("2d");
-        document.addEventListener("DOMContentLoaded", function() {
-          new Chart(ctx, chart_config);
-        });
+        new Chart(ctx, chart_config);
       }
     </script>
   </head>
