@@ -45,10 +45,14 @@
       }
     </style>
     <script>
+      var loaded_chart = null;
       const chart_config = {
         type: "bar",
         data: null,
         options: {
+          animation: {
+            duration: 0
+          },
           responsive: true,
           indexAxis: "x",
           scales: {
@@ -89,7 +93,7 @@
 
       function createChart() {
         const ctx = document.getElementById("myChart").getContext("2d");
-        new Chart(ctx, chart_config);
+        loaded_chart = new Chart(ctx, chart_config);
       }
     </script>
   </head>

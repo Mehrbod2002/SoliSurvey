@@ -130,6 +130,9 @@ function load_data(hexString) {
             data.datasets.push(dataset);
           });
           chart_config.data = data;
+          setTimeout(() => {
+            loaded_chart.update();
+          },2000);
           const longitude =
             infos
               .slice(0, 4)
@@ -164,10 +167,10 @@ function load_data(hexString) {
               ) * 1e-3;
           const fix_mode =
             parseInt(infos.slice(16, 20)[0], 16) == 0 ? "NOT Fixed" : "3D Fixed";
-            document.getElementById("long").innerText = longitude;
-            document.getElementById("lat").innerText = latitude;
-            document.getElementById("height_above").innerText = height_above;
-            document.getElementById("height_sea").innerText = height_sea;
+            document.getElementById("long").innerText = longitude.toFixed(7);
+            document.getElementById("lat").innerText = latitude.toFixed(7);
+            document.getElementById("height_above").innerText = height_above.toFixed(3);
+            document.getElementById("height_sea").innerText = height_sea.toFixed(3);
             document.getElementById("fix").innerText = fix_mode;
         }
       }
@@ -179,8 +182,9 @@ const socketUrl = "ws://192.168.2.1/sattelite.inf";
 
 let webSocket = new WebSocket(socketUrl);
 
-// webSocket.onopen = (event) => {
-// };
+webSocket.onopen = (event) => {
+  console.log("opened")
+};
 
 webSocket.onmessage = (event) => {
   var reader = new FileReader();
@@ -191,11 +195,10 @@ webSocket.onmessage = (event) => {
   reader.readAsArrayBuffer(event.data)
 };
 
-// webSocket.onclose = (event) => {
-// };
+webSocket.onclose = (event) => {
+  console.log("closed")
+};
 
 webSocket.onerror = (msg) => {
   console.log("Error :", msg);
 };
-
-
