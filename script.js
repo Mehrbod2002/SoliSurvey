@@ -9,6 +9,7 @@ function toggleSidebar() {
 }
 
 function load_data(hexString) {
+  console.log(hexString);
   const GNSS_ID = {
     0: "GPS",
     1: "SBAS",
@@ -197,23 +198,33 @@ function load_data(hexString) {
 }
 
 const socketUrl = "ws://192.168.2.1/sattelite.inf";
-let webSocket = new WebSocket(socketUrl);
+const socket = io(socketUrl);
 
-webSocket.onopen = (event) => {
-  console.log("Open :", event);
-};
+socket.on('message', (data) => {
+  console.log('Received message:', data);
 
-webSocket.onmessage = (event) => {
-  console.log("recieve")
-  load_data(event.data);
-};
+  const textDecoder = new TextDecoder('utf-8');
+  const receivedText = textDecoder.decode(data);
+  console.log(receivedText);
 
-webSocket.onclose = (event) => {
-  console.log("closed", event)
-};
+});
+// let webSocket = new WebSocket(socketUrl);
 
-webSocket.onerror = (msg) => {
-  console.log("Error :", msg);
-};
+// webSocket.onopen = (event) => {
+//   console.log("Open :", event);
+// };
+
+// webSocket.onmessage = (event) => {
+//   console.log("recieve")
+//   load_data(event.data);
+// };
+
+// webSocket.onclose = (event) => {
+//   console.log("closed", event)
+// };
+
+// webSocket.onerror = (msg) => {
+//   console.log("Error :", msg);
+// };
 
 
